@@ -1,7 +1,6 @@
 """
 Nagios Plugin resource(s).
 """
-from collections import namedtuple
 from json import loads
 from logging import getLogger
 from requests import get
@@ -13,8 +12,42 @@ from nagiosplugin import (
 )
 
 
-CodeAndReason = namedtuple("CodeAndReason", ["code", "reason"])
 PROXY = "proxy"
+
+STATUSES = {
+    "critical": 2,
+    "passing": 0,
+    "unknown": 3,
+    "warning": 1,
+}
+
+
+class ConsulCheckHealth(object):
+    """
+    Wrapper around Consul's node health check results.
+    """
+    def __init__(self, code, reason):
+        self.code = code
+        self.reason = reason
+
+    @staticmethod
+    def to_code(status):
+        return STATUSES.get(status, 3)
+
+    @classmethod
+    def from_dict(cls, dct):
+        # body will be a list of dictionaries with keys:
+        #  - Node
+        #  - CheckID
+        #  - ServiceName
+        #  - Notes
+        #  - Status
+        #  - ServiceID
+        #  - Output
+        return cls(
+            code=ConsulCheckHealth.to_code(dct["Status"]),
+            reason=dct["Output"],
+        )
 
 
 class ConsulNodeCheckStatus(Resource):
@@ -42,20 +75,14 @@ class ConsulNodeCheckStatus(Resource):
             self.host,
             self.token or ""
         )
+        self.logger.debug("Query node health at url: '{}'".format(
+            url,
+        ))
         response = get(url)
         response.raise_for_status()
 
-        # body will be a list of dictionaries with keys:
-        #  - Node
-        #  - CheckID
-        #  - ServiceName
-        #  - Notes
-        #  - Status
-        #  - ServiceID
-        #  - Output
-
         return {
-            check["CheckID"]: check
+            check["CheckID"]: ConsulCheckHealth.from_dict(check)
             for check in loads(response.text)
         }
 
@@ -81,9 +108,5 @@ class ConsulNodeCheckStatus(Resource):
 
         Returns a metric with the checks status and output in its value.
         """
-        check_health = self.get_check_health()
-        value = CodeAndReason(
-            code=check_health["Status"],
-            reason=check_health["Output"],
-        )
+        value = self.get_check_health()
         yield Metric(self.check_id, value, context=PROXY)
