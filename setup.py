@@ -18,6 +18,7 @@ setup(
     install_requires=[
         "click>=6.2",
         "nagiosplugin>=1.2.3",
+        "requests>=2.9.1",
     ],
     tests_require=[
         "PyHamcrest>=1.8.5",
