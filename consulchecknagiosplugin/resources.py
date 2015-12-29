@@ -36,7 +36,7 @@ class ConsulNodeCheckStatus(Resource):
         """
         Query a Consul node for the health of all local checks.
         """
-        url = "http://{}:{}/1/health/node/{}?token=".format(
+        url = "http://{}:{}/v1/health/node/{}?token=".format(
             self.host,
             self.port,
             self.host,
