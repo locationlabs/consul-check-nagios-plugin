@@ -4,3 +4,11 @@ python:
 sudo: false
 install: pip install .
 script: python setup.py nosetests
+deploy:
+  provider: pypi
+  user: jessemyers
+  password:
+    secure: Yo8CrXfjDl5CR3yPYi2vBpl98Wp12M0pluYaveVZw5bfG/OeN/AiAKq56jwnm8Ucz9VmHfzeQD3w+A0foJCFBSuF9p3KzquJmpnFCSyl9c7I1YYgT34+g99qQ1qBGvoK6gJBjac3vasrcnI9/NmUsR5cbcd5xcoLqimtP5qjA6rgN4vngnGUXNy7/e2VPX6A8SK+iV/QT+anDLnE2zkg/FlhRTzkRU3UVSWIyO7JfNwkZuXWAwdcBcGBKxwu7K5R/PPl5IH4Mr5Dz7HTrf9Y1SbiafhRU1XfIjcHpNAVwou0q4W3f0m354/cYmhjBLojZbdc4st/lsWUN5/t0c8+rnoux5Pr/eOisSVVYglbFmCL0LrC2vxKzspGn2pQ5uOYFHIaTGuQ23siIsnYbqzoUbrTO3/tuPvlfyn+Q7Ukl63DQitkWbXLkcon/QJ4mAdNOvuDJ1Ga0kwLEjLRwyvCnvOYziR2syV+g+7oonlubBXgZb7eZXKsNsDGsuc/xRzphHtm9K9rA02XTvB9M08H77XDJl7B58IwQ72wnqPw4mkCVbqwxf9WoAFvd9rDS0bRCMN25bO+dOFhrHr3gbmO/foaSsUHPw+mxMpmu0BD94J84fsBYh//OHwoJ/vQtFMXiq5S5GcXip2BY8S9VAvLUvaYHsE4dYbSltsrTdFcQgg=
+  on:
+    tags: true
+    repo: locationlabs/consul-check-nagios-plugin
