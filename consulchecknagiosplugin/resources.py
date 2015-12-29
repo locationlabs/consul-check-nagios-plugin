@@ -3,16 +3,16 @@ Nagios Plugin resource(s).
 """
 from json import loads
 from logging import getLogger
-from requests import get
 
 from nagiosplugin import (
     CheckError,
     Metric,
     Resource,
 )
+from requests import get
 
+from consulchecknagiosplugin.context import PassThroughContext
 
-PROXY = "proxy"
 
 STATUSES = {
     "critical": 2,
@@ -75,12 +75,15 @@ class ConsulNodeCheckStatus(Resource):
             self.host,
             self.token or ""
         )
-        self.logger.debug("Query node health at url: '{}'".format(
+        self.logger.info("Query node health at url: '{}'".format(
             url,
         ))
         response = get(url)
+        self.logger.debug("HTTP response was: '{} {}'".format(
+            response.status_code,
+            response.reason,
+        ))
         response.raise_for_status()
-
         return {
             check["CheckID"]: ConsulCheckHealth.from_dict(check)
             for check in loads(response.text)
@@ -109,4 +112,4 @@ class ConsulNodeCheckStatus(Resource):
         Returns a metric with the checks status and output in its value.
         """
         value = self.get_check_health()
-        yield Metric(self.check_id, value, context=PROXY)
+        yield Metric(self.check_id, value, context=PassThroughContext.NAME)

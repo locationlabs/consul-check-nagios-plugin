@@ -8,8 +8,8 @@ from nagiosplugin import (
 )
 
 
-from consulchecknagiosplugin.context import ProxyContext
-from consulchecknagiosplugin.resources import ConsulNodeCheckStatus, PROXY
+from consulchecknagiosplugin.context import PassThroughContext
+from consulchecknagiosplugin.resources import ConsulNodeCheckStatus
 
 
 @command()
@@ -30,7 +30,7 @@ def main(verbose, host, port, token, check_id):
             token=token,
             check_id=check_id,
         ),
-        ProxyContext(PROXY),
+        PassThroughContext(),
         # TODO: summarize output nicely, especially in the case of long lines
     )
     check.main(verbose)

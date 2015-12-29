@@ -15,15 +15,19 @@ STATES = {
 }
 
 
-class ProxyContext(Context):
+class PassThroughContext(Context):
     """
     Context that reports another system's status verbatim.
     """
-    def __init__(self, name):
-        super(ProxyContext, self).__init__(
-            name=name,
-        )
+
+    NAME = "PASS"
+
+    def __init__(self):
+        super(PassThroughContext, self).__init__(PassThroughContext.NAME)
 
     def evaluate(self, metric, resource):
+        """
+        Evaluate the metric by passing its code and reason through.
+        """
         state = STATES.get(metric.value.code, Unknown)
         return self.result_cls(state, metric.value.reason, metric)

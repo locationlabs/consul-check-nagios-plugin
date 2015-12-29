@@ -8,7 +8,7 @@ from hamcrest import (
 )
 from mock import MagicMock
 
-from consulchecknagiosplugin.context import ProxyContext
+from consulchecknagiosplugin.context import PassThroughContext
 from nagiosplugin import Critical, Ok, Warn, Unknown
 
 
@@ -17,7 +17,7 @@ REASON = "reason"
 
 def test_evaluate():
     """
-    Validate that ProxyContext handles error codes properly.
+    Validate that PassThroughContext handles error codes properly.
     """
     def do_evaluate(context, metric, resource, state):
         result = context.evaluate(metric, resource)
@@ -33,7 +33,7 @@ def test_evaluate():
     }
 
     for code, state in CASES.items():
-        context = ProxyContext("test")
+        context = PassThroughContext()
         metric, resource = MagicMock(), MagicMock()
         metric.value.code = code
         metric.value.reason = REASON
