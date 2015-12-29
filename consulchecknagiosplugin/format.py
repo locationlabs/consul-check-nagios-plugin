@@ -34,7 +34,7 @@ def output_to_line(output, pattern=".*", max_length=80):
         match = search(pattern, line)
         if not match:
             continue
-        
+
         # use first matching line
         for group in match.groups():
             if group is not None:
