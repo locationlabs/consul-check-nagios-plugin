@@ -22,17 +22,20 @@ STATUSES = {
 }
 
 
+def status_to_code(status):
+    """
+    Translate Consul's check status to a Nagios code.
+    """
+    return STATUSES.get(status, 3)
+
+
 class ConsulCheckHealth(object):
     """
     Wrapper around Consul's node health check results.
     """
-    def __init__(self, code, reason):
+    def __init__(self, code, output):
         self.code = code
-        self.reason = reason
-
-    @staticmethod
-    def to_code(status):
-        return STATUSES.get(status, 3)
+        self.output = output
 
     @classmethod
     def from_dict(cls, dct):
@@ -45,8 +48,8 @@ class ConsulCheckHealth(object):
         #  - ServiceID
         #  - Output
         return cls(
-            code=ConsulCheckHealth.to_code(dct["Status"]),
-            reason=dct["Output"],
+            code=status_to_code(dct["Status"]),
+            output=dct["Output"],
         )
 
 

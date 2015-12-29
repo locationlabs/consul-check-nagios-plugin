@@ -9,6 +9,7 @@ from nagiosplugin import (
 
 
 from consulchecknagiosplugin.context import PassThroughContext
+from consulchecknagiosplugin.format import DEFAULT_PATTERN
 from consulchecknagiosplugin.resources import ConsulNodeCheckStatus
 
 
@@ -18,8 +19,9 @@ from consulchecknagiosplugin.resources import ConsulNodeCheckStatus
 @option("--host", default="localhost", help="Consul host")
 @option("--port", default=8500, help="Consul port")
 @option("--token", help="Consul token")
+@option("--pattern", default=DEFAULT_PATTERN, help="Check output extraction pattern")
 @argument("check-id")
-def main(verbose, host, port, token, check_id):
+def main(verbose, host, port, token, pattern, check_id):
     """
     Command line entry point. Defines common arguments.
     """
@@ -30,7 +32,8 @@ def main(verbose, host, port, token, check_id):
             token=token,
             check_id=check_id,
         ),
-        PassThroughContext(),
-        # TODO: summarize output nicely, especially in the case of long lines
+        PassThroughContext(
+            pattern=pattern,
+        ),
     )
     check.main(verbose)

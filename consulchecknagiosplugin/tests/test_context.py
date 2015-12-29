@@ -7,12 +7,13 @@ from hamcrest import (
     is_,
 )
 from mock import MagicMock
-
-from consulchecknagiosplugin.context import PassThroughContext
 from nagiosplugin import Critical, Ok, Warn, Unknown
 
+from consulchecknagiosplugin.context import PassThroughContext
+from consulchecknagiosplugin.resources import ConsulCheckHealth
 
-REASON = "reason"
+
+LINE = "line"
 
 
 def test_evaluate():
@@ -22,7 +23,7 @@ def test_evaluate():
     def do_evaluate(context, metric, resource, state):
         result = context.evaluate(metric, resource)
         assert_that(result.state, is_(equal_to(state)))
-        assert_that(result.hint, is_(equal_to(REASON)))
+        assert_that(result.hint, is_(equal_to(LINE)))
 
     CASES = {
         0: Ok,
@@ -34,7 +35,6 @@ def test_evaluate():
 
     for code, state in CASES.items():
         context = PassThroughContext()
-        metric, resource = MagicMock(), MagicMock()
-        metric.value.code = code
-        metric.value.reason = REASON
+        metric = MagicMock(value=ConsulCheckHealth(code, LINE))
+        resource = MagicMock()
         yield do_evaluate, context, metric, resource, state

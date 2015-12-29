@@ -9,6 +9,8 @@ from nagiosplugin import (
     Warn,
 )
 
+from consulchecknagiosplugin.format import DEFAULT_PATTERN, output_to_line
+
 
 STATES = {
     state.code: state for state in [Critical, Ok, Unknown, Warn]
@@ -22,12 +24,14 @@ class PassThroughContext(Context):
 
     NAME = "PASS"
 
-    def __init__(self):
+    def __init__(self, pattern=DEFAULT_PATTERN):
         super(PassThroughContext, self).__init__(PassThroughContext.NAME)
+        self.pattern = pattern
 
     def evaluate(self, metric, resource):
         """
-        Evaluate the metric by passing its code and reason through.
+        Evaluate the metric by passing its code through.
         """
         state = STATES.get(metric.value.code, Unknown)
-        return self.result_cls(state, metric.value.reason, metric)
+        line = output_to_line(metric.value.output, self.pattern)
+        return self.result_cls(state, line, metric)
