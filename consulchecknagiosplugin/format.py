@@ -13,7 +13,7 @@ DEFAULT_MAX_LENGTH = 199
 # The "result: " matching handles an internal/legacy check output format.
 #
 # Other output formats tend to "just work" as the fall through case.
-DEFAULT_PATTERN = "(?:(.*) Output: .*)|(.* result: (.*))"
+DEFAULT_PATTERN = "(?:(.*) Output: .*)|(?:.* result: (.*))"
 
 
 def summarize(line, max_length):
