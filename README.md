@@ -17,4 +17,7 @@ Use pip:
 
 The basic usage is:
 
-    check-consul --host <consul-hostname> <check-name>
+    check-consul <node-name> <check-name>
+
+By default, the check assumes it will connext to a local Consul agent; this behavior can be overridden
+using CLI arguments.

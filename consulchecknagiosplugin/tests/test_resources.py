@@ -9,16 +9,15 @@ from hamcrest import (
 )
 
 from consulchecknagiosplugin.resources import ConsulCheckHealth, ConsulCheck
-from consulchecknagiosplugin.tests.fixtures import mocked_get
+from consulchecknagiosplugin.tests.fixtures import mocked_get, NODE, SERF_CHECK_ID
 
 
-CHECK_ID = "check-id"
 OUTPUT = "output"
 
 
 def test_parse_check_health():
     dct = {
-        "CheckID": CHECK_ID,
+        "CheckID": SERF_CHECK_ID,
         "Status": "passing",
         "Output": OUTPUT,
     }
@@ -30,10 +29,8 @@ def test_parse_check_health():
 
 def test_get_node_health():
     check = ConsulCheck(
-        host="localhost",
-        port="8500",
-        token=None,
-        check_id="serfHealth",
+        node=NODE,
+        check_id=SERF_CHECK_ID,
     )
     with mocked_get(check):
         node_health = check.get_node_health()
@@ -42,10 +39,8 @@ def test_get_node_health():
 
 def test_get_check_health():
     check = ConsulCheck(
-        host="localhost",
-        port="8500",
-        token=None,
-        check_id="serfHealth",
+        node=NODE,
+        check_id=SERF_CHECK_ID,
     )
     with mocked_get(check):
         check_health = check.get_check_health()
@@ -54,10 +49,8 @@ def test_get_check_health():
 
 def test_probe():
     check = ConsulCheck(
-        host="localhost",
-        port="8500",
-        token=None,
-        check_id="serfHealth",
+        node=NODE,
+        check_id=SERF_CHECK_ID,
     )
     with mocked_get(check):
         metrics = list(check.probe())

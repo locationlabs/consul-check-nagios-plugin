@@ -10,7 +10,7 @@ from nagiosplugin import Critical, Ok, Warn, Unknown
 
 from consulchecknagiosplugin.context import PassThroughContext
 from consulchecknagiosplugin.resources import ConsulCheckHealth, ConsulCheck
-from consulchecknagiosplugin.tests.fixtures import SERF_CHECK_ID
+from consulchecknagiosplugin.tests.fixtures import NODE, SERF_CHECK_ID
 
 
 LINE = "line"
@@ -36,5 +36,5 @@ def test_evaluate():
     for code, state in CASES.items():
         context = PassThroughContext()
         metric = ConsulCheckHealth(SERF_CHECK_ID, code, LINE).as_metric()
-        resource = ConsulCheck(SERF_CHECK_ID)
+        resource = ConsulCheck(NODE, SERF_CHECK_ID)
         yield do_evaluate, context, metric, resource, state

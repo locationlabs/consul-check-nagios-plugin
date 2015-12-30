@@ -7,8 +7,9 @@ from json import dumps
 from mock import patch
 
 
-SERF_CHECK_ID = "serfHealth"
+NODE = "node"
 OTHER_CHECK_ID = "other"
+SERF_CHECK_ID = "serfHealth"
 
 
 @contextmanager
@@ -21,10 +22,12 @@ def mocked_get(consul_check):
         mocked_get.return_value.status_code = 200
         mocked_get.return_value.reason = "OK"
         mocked_get.return_value.text = dumps([{
+            "Node": NODE,
             "CheckID": SERF_CHECK_ID,
             "Status": "passing",
             "Output": "Agent alive and reachable",
         }, {
+            "Node": NODE,
             "CheckID": OTHER_CHECK_ID,
             "Status": "critical",
             "Output": "Whatever | it is",

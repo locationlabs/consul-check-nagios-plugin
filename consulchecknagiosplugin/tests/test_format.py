@@ -24,7 +24,7 @@ HTTP_LINE = "{} Output: <HTML/>".format(HTTP_SUMMARY)
 
 def test_summarize():
     assert_that(summarize("foo bar", 3), is_(equal_to("foo")))
-    assert_that(summarize("foo bar", 3), is_(equal_to("foo")))
+    assert_that(summarize("foo bar", 4), is_(equal_to("foo")))
 
 
 def test_extract_line():

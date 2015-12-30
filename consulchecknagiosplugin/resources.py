@@ -66,10 +66,12 @@ class ConsulCheck(Resource):
     Returns node-specific check status and output information (from Consul).
     """
     def __init__(self,
+                 node,
                  check_id,
                  host=DEFAULT_HOST,
                  port=DEFAULT_PORT,
                  token=None):
+        self.node = node
         self.check_id = check_id
         self.host = host
         self.port = port
@@ -81,7 +83,7 @@ class ConsulCheck(Resource):
         return "http://{}:{}/v1/health/node/{}?token=".format(
             self.host,
             self.port,
-            self.host,
+            self.node,
             self.token or ""
         )
 
@@ -116,7 +118,7 @@ class ConsulCheck(Resource):
         except KeyError:
             raise CheckError("No Consul data for check: '{}' on node '{}'".format(
                 self.check_id,
-                self.host,
+                self.node,
             ))
 
     def probe(self):
