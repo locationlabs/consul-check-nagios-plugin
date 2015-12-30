@@ -14,6 +14,9 @@ from requests import get
 from consulchecknagiosplugin.context import PassThroughContext
 
 
+DEFAULT_HOST = "localhost"
+DEFAULT_PORT = 8500
+
 STATUSES = {
     "critical": 2,
     "passing": 0,
@@ -58,30 +61,33 @@ class ConsulCheck(Resource):
     Returns node-specific check status and output information (from Consul).
     """
     def __init__(self,
-                 host,
-                 port,
-                 token,
-                 check_id):
+                 check_id,
+                 host=DEFAULT_HOST,
+                 port=DEFAULT_PORT,
+                 token=None):
+        self.check_id = check_id
         self.host = host
         self.port = port
         self.token = token
-        self.check_id = check_id
         self.logger = getLogger('nagiosplugin')
 
-    def get_node_health(self):
-        """
-        Query a Consul node for the health of all local checks.
-        """
-        url = "http://{}:{}/v1/health/node/{}?token=".format(
+    @property
+    def url(self):
+        return "http://{}:{}/v1/health/node/{}?token=".format(
             self.host,
             self.port,
             self.host,
             self.token or ""
         )
+
+    def get_node_health(self):
+        """
+        Query a Consul node for the health of all local checks.
+        """
         self.logger.info("Query node health at url: '{}'".format(
-            url,
+            self.url,
         ))
-        response = get(url)
+        response = get(self.url)
         self.logger.debug("HTTP response was: '{} {}'".format(
             response.status_code,
             response.reason,
@@ -115,4 +121,8 @@ class ConsulCheck(Resource):
         Returns a metric with the checks status and output in its value.
         """
         value = self.get_check_health()
+        self.logger.debug("Check health is: {} - {}".format(
+            value.code,
+            value.output,
+        ))
         yield Metric(self.check_id, value, context=PassThroughContext.NAME)

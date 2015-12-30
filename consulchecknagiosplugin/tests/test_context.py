@@ -6,13 +6,13 @@ from hamcrest import (
     equal_to,
     is_,
 )
-from mock import MagicMock
-from nagiosplugin import Critical, Ok, Warn, Unknown
+from nagiosplugin import Critical, Metric, Ok, Warn, Unknown
 
 from consulchecknagiosplugin.context import PassThroughContext
-from consulchecknagiosplugin.resources import ConsulCheckHealth
+from consulchecknagiosplugin.resources import ConsulCheckHealth, ConsulCheck
 
 
+CHECK_ID = "serfHealth"
 LINE = "line"
 
 
@@ -35,6 +35,6 @@ def test_evaluate():
 
     for code, state in CASES.items():
         context = PassThroughContext()
-        metric = MagicMock(value=ConsulCheckHealth(code, LINE))
-        resource = MagicMock()
+        metric = Metric(CHECK_ID, ConsulCheckHealth(code, LINE), context=PassThroughContext.NAME)
+        resource = ConsulCheck(CHECK_ID)
         yield do_evaluate, context, metric, resource, state
