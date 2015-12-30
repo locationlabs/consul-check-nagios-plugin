@@ -10,7 +10,7 @@ from nagiosplugin import (
 
 from consulchecknagiosplugin.context import PassThroughContext
 from consulchecknagiosplugin.format import DEFAULT_PATTERN
-from consulchecknagiosplugin.resources import ConsulNodeCheckStatus
+from consulchecknagiosplugin.resources import ConsulCheck
 
 
 @command()
@@ -26,7 +26,7 @@ def main(verbose, host, port, token, pattern, check_id):
     Command line entry point. Defines common arguments.
     """
     check = Check(
-        ConsulNodeCheckStatus(
+        ConsulCheck(
             host=host,
             port=port,
             token=token,

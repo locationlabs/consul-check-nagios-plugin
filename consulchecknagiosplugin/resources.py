@@ -53,7 +53,7 @@ class ConsulCheckHealth(object):
         )
 
 
-class ConsulNodeCheckStatus(Resource):
+class ConsulCheck(Resource):
     """
     Returns node-specific check status and output information (from Consul).
     """
