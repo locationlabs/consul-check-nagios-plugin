@@ -13,6 +13,20 @@ from consulchecknagiosplugin.format import DEFAULT_PATTERN
 from consulchecknagiosplugin.resources import ConsulCheck, DEFAULT_HOST, DEFAULT_PORT
 
 
+def make_check(host, port, token, pattern, check_id):
+    return Check(
+        ConsulCheck(
+            check_id=check_id,
+            host=host,
+            port=port,
+            token=token,
+        ),
+        PassThroughContext(
+            pattern=pattern,
+        ),
+    )
+
+
 @command()
 @guarded
 @option("-v", "--verbose", count=True)
@@ -25,15 +39,5 @@ def main(verbose, host, port, token, pattern, check_id):
     """
     Command line entry point. Defines common arguments.
     """
-    check = Check(
-        ConsulCheck(
-            check_id=check_id,
-            host=host,
-            port=port,
-            token=token,
-        ),
-        PassThroughContext(
-            pattern=pattern,
-        ),
-    )
-    check.main(verbose)
+    check = make_check(host, port, token, pattern, check_id)
+    return check.main(verbose)

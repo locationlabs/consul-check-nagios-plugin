@@ -4,6 +4,8 @@ Consul check formatting.
 from re import search
 
 
+DEFAULT_MAX_LENGTH = 99
+
 # The default output extraction pattern works well for certain LocationLabs use cases
 # but might not be generally applicable (and can be overwritten with the --pattern argument).
 #
@@ -14,9 +16,16 @@ from re import search
 DEFAULT_PATTERN = "(?:(.*) Output: .*)|(.* result: (.*))"
 
 
-def output_to_line(output, pattern=".*", max_length=80):
+def summarize(line, max_length):
     """
-    Translate Consult check output to something Nagios friendly.
+    Summarize a line by shortening it.
+    """
+    return line[:max_length]
+
+
+def extract_line(output, pattern=".*", max_length=DEFAULT_MAX_LENGTH):
+    """
+    Extract a Nagios friendly line from Consul output.
 
     Consul check output can be literally anything. At the same time, we don't want
     to show arbitrary text because newlines and other special characters won't show up well
@@ -39,13 +48,13 @@ def output_to_line(output, pattern=".*", max_length=80):
         for group in match.groups():
             if group is not None:
                 # use first matching group
-                return group[:max_length]
+                return summarize(group, max_length)
         else:
             # use entire match
-            return match.group(0)[:max_length]
+            return summarize(match.group(0), max_length)
     else:
         if lines:
             # fall through here
-            return lines[0][:max_length]
+            return summarize(lines[0], max_length)
         else:
             return None

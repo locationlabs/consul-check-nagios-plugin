@@ -36,7 +36,8 @@ class ConsulCheckHealth(object):
     """
     Wrapper around Consul's node health check results.
     """
-    def __init__(self, code, output):
+    def __init__(self, check_id, code, output):
+        self.check_id = check_id
         self.code = code
         self.output = output
 
@@ -51,9 +52,13 @@ class ConsulCheckHealth(object):
         #  - ServiceID
         #  - Output
         return cls(
+            check_id=dct["CheckID"],
             code=status_to_code(dct["Status"]),
             output=dct["Output"],
         )
+
+    def as_metric(self):
+        return Metric(self.check_id, self, context=PassThroughContext.NAME)
 
 
 class ConsulCheck(Resource):
@@ -125,4 +130,4 @@ class ConsulCheck(Resource):
             value.code,
             value.output,
         ))
-        yield Metric(self.check_id, value, context=PassThroughContext.NAME)
+        yield value.as_metric()

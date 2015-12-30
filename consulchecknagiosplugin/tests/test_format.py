@@ -7,7 +7,11 @@ from hamcrest import (
     is_,
 )
 
-from consulchecknagiosplugin.format import output_to_line, DEFAULT_PATTERN
+from consulchecknagiosplugin.format import (
+    DEFAULT_PATTERN,
+    extract_line,
+    summarize,
+)
 
 
 # Typical Consul output for a Serf Health Status check
@@ -18,7 +22,12 @@ HTTP_SUMMARY = "HTTP GET http://host:port/path: 200 OK"
 HTTP_LINE = "{} Output: <HTML/>".format(HTTP_SUMMARY)
 
 
-def test_output_to_line():
+def test_summarize():
+    assert_that(summarize("foo bar", 3), is_(equal_to("foo")))
+    assert_that(summarize("foo bar", 3), is_(equal_to("foo")))
+
+
+def test_extract_line():
 
     CASES = [
         # basic match
@@ -35,4 +44,4 @@ def test_output_to_line():
         (HTTP_LINE, DEFAULT_PATTERN, HTTP_SUMMARY),
     ]
     for output, pattern, line in CASES:
-        yield assert_that, output_to_line(output, pattern), is_(equal_to(line))
+        yield assert_that, extract_line(output, pattern), is_(equal_to(line))
